@@ -17,9 +17,9 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: your_database
-          MYSQL_USER: your_username
-          MYSQL_PASSWORD: your_password
+          MYSQL_DATABASE: mate_db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: rootpassword
         ports:
           - 3306:3306
         options: >-
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # Указываем Temurin (AdoptOpenJDK)
+          distribution: 'temurin'
 
       - name: Run Maven Build
         run: mvn clean install
