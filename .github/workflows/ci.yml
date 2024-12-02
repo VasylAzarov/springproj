@@ -16,8 +16,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword  # Пароль для root
-          MYSQL_DATABASE: mate_db  # Имя базы данных
+          MYSQL_ROOT_PASSWORD: dfcz80509230175
+          MYSQL_DATABASE: mate_db
         ports:
           - 3306:3306
         options: >-
