@@ -1,0 +1,33 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+
+      - name: Set up Maven
+        uses: actions/setup-maven@v3
+        with:
+          maven-version: '4.0.0'
+
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+
+      - name: Run Tests
+        run: mvn clean test
