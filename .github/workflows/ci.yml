@@ -11,15 +11,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: mate_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: rootpassword
+          MYSQL_ROOT_PASSWORD: rootpassword  # Пароль для root
+          MYSQL_DATABASE: mate_db  # Имя базы данных
         ports:
           - 3306:3306
         options: >-
@@ -36,7 +34,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'temurin'  # Указываем Temurin (AdoptOpenJDK)
 
       - name: Run Maven Build
         run: mvn clean install
