@@ -3,7 +3,7 @@ package com.example.mate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(properties = {"spring.profiles.active=test"})
+@SpringBootTest
 public class MateApplicationTests {
 
     @Test
