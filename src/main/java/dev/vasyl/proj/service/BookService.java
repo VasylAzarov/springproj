@@ -1,6 +1,6 @@
-package com.example.service;
+package dev.vasyl.proj.service;
 
-import com.example.model.Book;
+import dev.vasyl.proj.model.Book;
 import java.util.List;
 
 public interface BookService {

@@ -1,4 +1,4 @@
-package com.example.model;
+package dev.vasyl.proj.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

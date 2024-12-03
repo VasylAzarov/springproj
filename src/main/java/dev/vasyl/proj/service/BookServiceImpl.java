@@ -1,7 +1,7 @@
-package com.example.service;
+package dev.vasyl.proj.service;
 
-import com.example.model.Book;
-import com.example.repository.BookRepository;
+import dev.vasyl.proj.model.Book;
+import dev.vasyl.proj.repository.BookRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

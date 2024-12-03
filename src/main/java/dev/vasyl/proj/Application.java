@@ -1,7 +1,7 @@
-package com.example;
+package dev.vasyl.proj;
 
-import com.example.model.Book;
-import com.example.service.BookService;
+import dev.vasyl.proj.model.Book;
+import dev.vasyl.proj.service.BookService;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
 @RequiredArgsConstructor
-@EntityScan(basePackages = "com.example.model")
+@EntityScan(basePackages = "dev.vasyl.proj")
 public class Application implements CommandLineRunner {
     @Autowired
     private final BookService bookService;

@@ -1,6 +1,6 @@
-package com.example.repository;
+package dev.vasyl.proj.repository;
 
-import com.example.model.Book;
+import dev.vasyl.proj.model.Book;
 import java.util.List;
 
 public interface BookRepository {
