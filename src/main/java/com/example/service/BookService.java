@@ -1,10 +1,9 @@
-package com.example.mate.service;
+package com.example.service;
 
-import com.example.mate.model.Book;
+import com.example.model.Book;
 import java.util.List;
 
 public interface BookService {
-
     Book save(Book book);
 
     List<Book> findAll();
