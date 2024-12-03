@@ -74,7 +74,10 @@ public class Book {
             return false;
         }
         Book book = (Book) o;
-        return id == book.id && Objects.equals(title, book.title) && Objects.equals(author, book.author) && Objects.equals(price, book.price);
+        return id == book.id
+                && Objects.equals(title, book.title)
+                && Objects.equals(author, book.author)
+                && Objects.equals(price, book.price);
     }
 
     @Override
