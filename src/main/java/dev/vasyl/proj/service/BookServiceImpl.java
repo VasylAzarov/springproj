@@ -2,6 +2,7 @@ package dev.vasyl.proj.service;
 
 import dev.vasyl.proj.dto.BookDto;
 import dev.vasyl.proj.dto.CreateBookRequestDto;
+import dev.vasyl.proj.exception.EntityNotFoundException;
 import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.repository.BookRepository;
@@ -32,7 +33,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto findById(long id) {
         Book book = bookRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Can`t find Book entity bi id: " + id));
+                () -> new EntityNotFoundException("Can`t find Book entity by id: " + id));
         return bookMapper.toDto(book);
     }
 }

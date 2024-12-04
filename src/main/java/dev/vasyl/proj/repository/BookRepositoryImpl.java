@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataProcessingException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -37,25 +38,20 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             return session.createQuery("SELECT b FROM Book b", Book.class).list();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+        } catch (RuntimeException e) {
+            throw new DataProcessingException("Failed to find all book entities", e);
         }
     }
 
     @Override
     public Optional<Book> findById(Long id) {
-        Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             Book book = session.find(Book.class, id);
             return Optional.ofNullable(book);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to find entity by id: " + id, e);
+            throw new DataProcessingException("Failed to find entity by id: " + id, e);
         }
     }
-
 }
