@@ -2,6 +2,7 @@ package dev.vasyl.proj.repository;
 
 import dev.vasyl.proj.model.Book;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -34,6 +35,7 @@ public class BookRepositoryImpl implements BookRepository {
         }
     }
 
+    @Override
     public List<Book> findAll() {
         Session session = sessionFactory.openSession();
         try {
@@ -44,4 +46,16 @@ public class BookRepositoryImpl implements BookRepository {
             }
         }
     }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        Session session = sessionFactory.openSession();
+        try {
+            Book book = session.find(Book.class, id);
+            return Optional.ofNullable(book);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to find entity by id: " + id, e);
+        }
+    }
+
 }
