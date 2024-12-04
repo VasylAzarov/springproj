@@ -28,7 +28,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Failed to save entity: " + book, e);
+            throw new DataProcessingException("Failed to save entity: " + book, e);
         } finally {
             if (session != null) {
                 session.close();
