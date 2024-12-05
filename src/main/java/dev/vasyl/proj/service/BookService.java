@@ -1,10 +1,13 @@
 package dev.vasyl.proj.service;
 
-import dev.vasyl.proj.model.Book;
+import dev.vasyl.proj.dto.BookDto;
+import dev.vasyl.proj.dto.CreateBookRequestDto;
 import java.util.List;
 
 public interface BookService {
-    Book save(Book book);
+    BookDto save(CreateBookRequestDto book);
 
-    List<Book> findAll();
+    List<BookDto> findAll();
+
+    BookDto findById(long id);
 }
