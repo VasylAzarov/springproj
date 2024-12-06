@@ -10,9 +10,15 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
 
-    BookDto toDto(Book book);
-
     Book toModel(CreateBookRequestDto createBookRequestDto);
+
+    default Book toModel(CreateBookRequestDto createBookRequestDto, Long id) {
+        Book book = toModel(createBookRequestDto);
+        book.setId(id);
+        return book;
+    }
+
+    BookDto toDto(Book book);
 
     List<BookDto> toBookDtoList(List<Book> books);
 }
