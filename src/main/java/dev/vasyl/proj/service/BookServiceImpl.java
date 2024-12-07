@@ -6,8 +6,9 @@ import dev.vasyl.proj.exception.EntityNotFoundException;
 import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.repository.BookRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +25,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> findAll() {
-        return bookMapper.toBookDtoList(bookRepository.findAll());
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookMapper.toBookDtoPage(bookRepository.findAll(pageable));
     }
 
     @Override
@@ -33,5 +34,19 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find Book entity by id: " + id));
         return bookMapper.toDto(book);
+    }
+
+    @Override
+    public BookDto update(Long id, CreateBookRequestDto requestDto) {
+        Book existingBook = bookRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't find Book entity by id: " + id));
+        bookMapper.updateBookFromDto(requestDto, existingBook);
+        Book updatedBook = bookRepository.save(existingBook);
+        return bookMapper.toDto(updatedBook);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
     }
 }
