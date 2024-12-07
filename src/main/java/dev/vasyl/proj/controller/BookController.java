@@ -6,9 +6,12 @@ import dev.vasyl.proj.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 @Tag(name = "Book manager",
         description = "API for managing books")
 public class BookController {
@@ -30,9 +33,12 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    @Operation(summary = "Get all books by page",
-            description = "Get all books by page params or/and sort params")
-    public List<BookDto> getAll(Pageable pageable) {
+    @Operation(summary = "Get Book page",
+            description = "Get Book page by page params or/and sort params")
+    public Page<BookDto> getAll(@ParameterObject
+                                    @PageableDefault(size = 20, sort = "title",
+                                            direction = Sort.Direction.ASC)
+                                            Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
