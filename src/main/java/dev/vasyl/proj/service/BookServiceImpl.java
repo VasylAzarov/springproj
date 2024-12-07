@@ -6,8 +6,9 @@ import dev.vasyl.proj.exception.EntityNotFoundException;
 import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.repository.BookRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +25,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> findAll() {
-        return bookMapper.toBookDtoList(bookRepository.findAll());
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookMapper.toBookDtoPage(bookRepository.findAll(pageable));
     }
 
     @Override
