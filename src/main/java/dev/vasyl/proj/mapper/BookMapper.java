@@ -6,6 +6,7 @@ import dev.vasyl.proj.dto.CreateBookRequestDto;
 import dev.vasyl.proj.model.Book;
 import java.util.List;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -14,11 +15,7 @@ public interface BookMapper {
 
     Book toModel(CreateBookRequestDto createBookRequestDto);
 
-    default Book toModel(CreateBookRequestDto createBookRequestDto, Long id) {
-        Book book = toModel(createBookRequestDto);
-        book.setId(id);
-        return book;
-    }
+    void updateBookFromDto(CreateBookRequestDto requestDto, @MappingTarget Book entity);
 
     BookDto toDto(Book book);
 
