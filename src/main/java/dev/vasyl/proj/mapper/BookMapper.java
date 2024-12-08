@@ -1,8 +1,8 @@
 package dev.vasyl.proj.mapper;
 
 import dev.vasyl.proj.config.MapperConfig;
-import dev.vasyl.proj.dto.BookDto;
-import dev.vasyl.proj.dto.CreateBookRequestDto;
+import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import dev.vasyl.proj.model.Book;
 import java.util.List;
 import org.mapstruct.Mapper;
