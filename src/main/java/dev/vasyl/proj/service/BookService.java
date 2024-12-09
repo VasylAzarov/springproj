@@ -1,7 +1,7 @@
 package dev.vasyl.proj.service;
 
-import dev.vasyl.proj.dto.BookDto;
-import dev.vasyl.proj.dto.CreateBookRequestDto;
+import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,6 +11,8 @@ public interface BookService {
     Page<BookDto> findAll(Pageable pageable);
 
     BookDto findById(long id);
+
+    boolean existByIsbn(String isbn);
 
     BookDto update(Long id, CreateBookRequestDto requestDto);
 
