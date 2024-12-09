@@ -5,6 +5,8 @@ import dev.vasyl.proj.dto.user.UserResponseDto;
 import dev.vasyl.proj.exception.RegistrationException;
 import dev.vasyl.proj.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,10 @@ public class AuthenticationController {
     @PostMapping("/registration")
     @Operation(summary = "User Registration",
             description = "User Registration")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully registered"),
+            @ApiResponse(responseCode = "409", description = "User with email already exists")
+    })
     public UserResponseDto register(@RequestBody @Valid UserRegistrationRequestDto requestDto)
             throws RegistrationException {
         return userService.register(requestDto);

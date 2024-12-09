@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-roles-table
+      author: vasyl
+      runOnChange: true
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - addForeignKeyConstraint:
+                  baseColumnNames: user_id
+                  baseTableName: user_roles
+                  referencedTableName: users
+                  referencedColumnNames: id
+                  onDelete: CASCADE
+              - addForeignKeyConstraint:
+                  baseColumnNames: role_id
+                  baseTableName: user_roles
+                  referencedTableName: roles
+                  referencedColumnNames: id
+                  onDelete: CASCADE

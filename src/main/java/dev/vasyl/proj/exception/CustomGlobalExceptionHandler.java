@@ -53,8 +53,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFoundException(
-            RegistrationException ex, WebRequest request) {
+            EntityNotFoundException ex, WebRequest request) {
         return processHandlingException(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    protected ResponseEntity<Object> handleEntityAlreadyExistsException(
+            EntityAlreadyExistsException ex, WebRequest request) {
+        return processHandlingException(ex, HttpStatus.CONFLICT);
     }
 
     private ResponseEntity<Object> processHandlingException(RuntimeException ex,

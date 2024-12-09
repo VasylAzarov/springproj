@@ -8,6 +8,7 @@ import dev.vasyl.proj.model.User;
 import dev.vasyl.proj.repository.UserRepository;
 import dev.vasyl.proj.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -24,7 +26,9 @@ public class UserServiceImpl implements UserService {
                     + requestDto.getEmail()
                     + "] already exist");
         }
-        User user = userRepository.save(userMapper.toModel(requestDto));
+        User user = userMapper.toModel(requestDto);
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user = userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
 }

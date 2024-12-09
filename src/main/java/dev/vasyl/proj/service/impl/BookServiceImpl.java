@@ -2,6 +2,7 @@ package dev.vasyl.proj.service.impl;
 
 import dev.vasyl.proj.dto.book.BookDto;
 import dev.vasyl.proj.dto.book.CreateBookRequestDto;
+import dev.vasyl.proj.exception.EntityAlreadyExistsException;
 import dev.vasyl.proj.exception.EntityNotFoundException;
 import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.model.Book;
@@ -20,6 +21,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
+        if (bookRepository.existsByIsbn(bookDto.getIsbn())) {
+            throw new EntityAlreadyExistsException("book with isbn ["
+                    + bookDto.getIsbn()
+                    + "] already exist");
+        }
         Book book = bookRepository.save(bookMapper.toModel(bookDto));
         return bookMapper.toDto(book);
     }
@@ -34,6 +40,11 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can`t find Book entity by id: " + id));
         return bookMapper.toDto(book);
+    }
+
+    @Override
+    public boolean existByIsbn(String isbn) {
+        return bookRepository.existsByIsbn(isbn);
     }
 
     @Override

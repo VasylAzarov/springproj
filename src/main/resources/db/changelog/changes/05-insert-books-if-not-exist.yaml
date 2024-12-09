@@ -1,0 +1,76 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books-if-not-exist
+      author: vasyl
+      runOnChange: true
+      preConditions:
+        - onFail: MARK_RAN
+          sqlCheck:
+            sql: "SELECT COUNT(*) FROM books"
+            expectedResult: 0
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: title
+                  value: "title1"
+              - column:
+                  name: author
+                  value: "bookAuthor1"
+              - column:
+                  name: isbn
+                  value: "bookSomeIsbn1"
+              - column:
+                  name: price
+                  value: 11
+              - column:
+                  name: description
+                  value: "bookDescription1"
+              - column:
+                  name: cover_image
+                  value: "bookCoverImage1"
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: title
+                  value: "title2"
+              - column:
+                  name: author
+                  value: "bookAuthor2"
+              - column:
+                  name: isbn
+                  value: "bookSomeIsbn2"
+              - column:
+                  name: price
+                  value: 22
+              - column:
+                  name: description
+                  value: "bookDescription2"
+              - column:
+                  name: cover_image
+                  value: "bookCoverImage2"
+
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: title
+                  value: "title3"
+              - column:
+                  name: author
+                  value: "bookAuthor3"
+              - column:
+                  name: isbn
+                  value: "bookSomeIsbn3"
+              - column:
+                  name: price
+                  value: 33
+              - column:
+                  name: description
+                  value: "bookDescription3"
+              - column:
+                  name: cover_image
+                  value: "bookCoverImage3"
