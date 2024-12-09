@@ -1,7 +1,7 @@
 package dev.vasyl.proj.service;
 
-import dev.vasyl.proj.dto.BookDto;
-import dev.vasyl.proj.dto.CreateBookRequestDto;
+import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

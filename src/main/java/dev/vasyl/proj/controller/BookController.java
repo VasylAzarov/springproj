@@ -1,7 +1,7 @@
 package dev.vasyl.proj.controller;
 
-import dev.vasyl.proj.dto.BookDto;
-import dev.vasyl.proj.dto.CreateBookRequestDto;
+import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import dev.vasyl.proj.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Book manager",
         description = "API for managing books")
 public class BookController {
-
     private final BookService bookService;
 
     @GetMapping
