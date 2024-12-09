@@ -4,6 +4,7 @@ import dev.vasyl.proj.validation.ValidPassword;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -36,5 +37,6 @@ public class UserRegistrationRequestDto {
                     BERKSHIRE
                     RG1 1AT
                     UNITED KINGDOM""")
+    @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String shippingAddress;
 }

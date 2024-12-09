@@ -4,10 +4,9 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
-    public static final String PASSWORD_UPPERCASE_REGEX = ".*[A-Z].*";
-    public static final String PASSWORD_DIGIT_REGEX = ".*\\d.*";
-    public static final String PASSWORD_SPECIAL_CHAR_REGEX = ".*[!@#$%^&*(),.?\":{}|<>].*";
-    public static final String PASSWORD_MIN_LENGTH_REGEX = ".{8,}";
+    private static final String PASSWORD_UPPERCASE_REGEX = ".*[A-Z].*";
+    private static final String PASSWORD_DIGIT_REGEX = ".*\\d.*";
+    private static final String PASSWORD_SPECIAL_CHAR_REGEX = ".*[!@#$%^&*(),.?\":{}|<>].*";
 
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
@@ -19,7 +18,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
 
-        if (!password.matches(PASSWORD_MIN_LENGTH_REGEX)) {
+        if (password.length() < 8) {
             context.buildConstraintViolationWithTemplate(
                     "Password must be at least 8 characters long")
                     .addConstraintViolation();
