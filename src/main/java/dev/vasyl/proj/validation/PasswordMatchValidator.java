@@ -4,6 +4,7 @@ import dev.vasyl.proj.exception.RegistrationException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 public class PasswordMatchValidator implements ConstraintValidator<ValidPassword, Object> {
     private String passwordField;
@@ -27,7 +28,7 @@ public class PasswordMatchValidator implements ConstraintValidator<ValidPassword
             String password = (String) passwordField.get(value);
             String confirmPassword = (String) confirmPasswordField.get(value);
 
-            if (password == null || confirmPassword == null) {
+            if (Objects.equals(password, confirmPassword)) {
                 return true;
             }
             return password.equals(confirmPassword);

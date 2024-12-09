@@ -17,10 +17,12 @@ public class UserRegistrationRequestDto {
     private String email;
     @Schema(description = "User password",
             example = "Qwerty12345678$")
+    @NotBlank
     private String password;
     @Schema(description = "User confirmed password,"
             + " mast be similar with password",
             example = "Qwerty12345678$")
+    @NotBlank
     private String confirmedPassword;
     @Schema(description = "User first name",
             example = "Bob")
@@ -37,6 +39,6 @@ public class UserRegistrationRequestDto {
                     BERKSHIRE
                     RG1 1AT
                     UNITED KINGDOM""")
-    @Size(max = 1000, message = "Description must not exceed 1000 characters")
+    @Size(max = 255, message = "Description must not exceed 255 characters")
     private String shippingAddress;
 }
