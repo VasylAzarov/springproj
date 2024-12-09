@@ -39,6 +39,6 @@ public class UserRegistrationRequestDto {
                     BERKSHIRE
                     RG1 1AT
                     UNITED KINGDOM""")
-    @Size(max = 255, message = "Description must not exceed 1000 characters")
+    @Size(max = 255, message = "Description must not exceed 255 characters")
     private String shippingAddress;
 }
