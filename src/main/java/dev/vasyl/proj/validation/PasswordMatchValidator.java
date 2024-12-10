@@ -27,11 +27,7 @@ public class PasswordMatchValidator implements ConstraintValidator<ValidPassword
             confirmPasswordField.setAccessible(true);
             String password = (String) passwordField.get(value);
             String confirmPassword = (String) confirmPasswordField.get(value);
-
-            if (Objects.equals(password, confirmPassword)) {
-                return true;
-            }
-            return password.equals(confirmPassword);
+            return Objects.equals(password, confirmPassword);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RegistrationException(
                     "Error accessing fields for password match validation", e);
