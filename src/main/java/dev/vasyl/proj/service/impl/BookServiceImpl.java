@@ -43,11 +43,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean existByIsbn(String isbn) {
-        return bookRepository.existsByIsbn(isbn);
-    }
-
-    @Override
     public BookDto update(Long id, CreateBookRequestDto requestDto) {
         Book existingBook = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find Book entity by id: " + id));

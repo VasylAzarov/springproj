@@ -12,8 +12,6 @@ public interface BookService {
 
     BookDto findById(long id);
 
-    boolean existByIsbn(String isbn);
-
     BookDto update(Long id, CreateBookRequestDto requestDto);
 
     void deleteById(Long id);

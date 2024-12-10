@@ -1,14 +1,14 @@
 databaseChangeLog:
   - changeSet:
-      id: insert-books-if-not-exist
+      id: insert-books-1
       author: vasyl
       runOnChange: true
-      preConditions:
-        - onFail: MARK_RAN
-          sqlCheck:
-            sql: "SELECT COUNT(*) FROM books"
-            expectedResult: 0
       changes:
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM books WHERE isbn = 'bookSomeIsbn1'
         - insert:
             tableName: books
             columns:
@@ -31,6 +31,16 @@ databaseChangeLog:
                   name: cover_image
                   value: "bookCoverImage1"
 
+  - changeSet:
+      id: insert-books-2
+      author: vasyl
+      runOnChange: true
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM books WHERE isbn = 'bookSomeIsbn2'
         - insert:
             tableName: books
             columns:
@@ -53,6 +63,16 @@ databaseChangeLog:
                   name: cover_image
                   value: "bookCoverImage2"
 
+  - changeSet:
+      id: insert-books-3
+      author: vasyl
+      runOnChange: true
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM books WHERE isbn = 'bookSomeIsbn3'
         - insert:
             tableName: books
             columns:

@@ -24,4 +24,3 @@ public class RoleServiceImpl implements RoleService {
                 .orElseThrow(() -> new EntityNotFoundException("Role not found: " + roleName));
     }
 }
-

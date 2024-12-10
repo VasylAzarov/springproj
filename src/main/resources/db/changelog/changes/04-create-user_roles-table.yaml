@@ -5,7 +5,7 @@ databaseChangeLog:
       runOnChange: true
       changes:
         - createTable:
-            tableName: user_roles
+            tableName: users_roles
             columns:
               - column:
                   name: user_id
@@ -19,13 +19,13 @@ databaseChangeLog:
                     nullable: false
               - addForeignKeyConstraint:
                   baseColumnNames: user_id
-                  baseTableName: user_roles
+                  baseTableName: users_roles
                   referencedTableName: users
                   referencedColumnNames: id
                   onDelete: CASCADE
               - addForeignKeyConstraint:
                   baseColumnNames: role_id
-                  baseTableName: user_roles
+                  baseTableName: users_roles
                   referencedTableName: roles
                   referencedColumnNames: id
                   onDelete: CASCADE

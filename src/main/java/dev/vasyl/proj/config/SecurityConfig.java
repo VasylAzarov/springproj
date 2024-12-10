@@ -2,7 +2,7 @@ package dev.vasyl.proj.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import dev.vasyl.proj.sucurity.CustomUserDetailsService;
+import dev.vasyl.proj.sucurity.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
@@ -37,10 +37,7 @@ public class SecurityConfig {
                                         "/auth/**",
                                         "/error",
                                         "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-resources/**",
-                                        "/configuration/**",
-                                        "/webjars/**")
+                                        "/v3/api-docs/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
