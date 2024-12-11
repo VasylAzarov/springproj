@@ -7,8 +7,10 @@ import dev.vasyl.proj.exception.RegistrationException;
 import dev.vasyl.proj.mapper.UserMapper;
 import dev.vasyl.proj.model.Role;
 import dev.vasyl.proj.model.RoleName;
+import dev.vasyl.proj.model.ShoppingCart;
 import dev.vasyl.proj.model.User;
 import dev.vasyl.proj.repository.RoleRepository;
+import dev.vasyl.proj.repository.ShoppingCartRepository;
 import dev.vasyl.proj.repository.UserRepository;
 import dev.vasyl.proj.service.UserService;
 import java.util.Set;
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -32,12 +35,26 @@ public class UserServiceImpl implements UserService {
                     + requestDto.getEmail()
                     + "] already exist");
         }
-        User user = userMapper.toModel(requestDto);
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+
+        User user = saveUser(userMapper.toModel(requestDto),
+                passwordEncoder.encode(requestDto.getPassword()));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    private User saveUser (User user, String encodedPassword) {
+        user.setPassword(encodedPassword);
         Role role = roleRepository.findByName(RoleName.USER).orElseThrow(
                 () -> new EntityNotFoundException("Error when set user role"));
         user.setRoles(Set.of(role));
         userRepository.save(user);
-        return userMapper.toUserResponse(user);
+        createShoppingCartForUser(user);
+        return user;
+    }
+
+    private void createShoppingCartForUser(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 }
