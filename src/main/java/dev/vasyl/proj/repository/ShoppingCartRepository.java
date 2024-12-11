@@ -1,9 +1,9 @@
 package dev.vasyl.proj.repository;
 
-import dev.vasyl.proj.model.Category;
+import dev.vasyl.proj.model.ShoppingCart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
 }
