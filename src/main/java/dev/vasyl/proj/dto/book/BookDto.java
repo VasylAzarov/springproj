@@ -2,6 +2,7 @@ package dev.vasyl.proj.dto.book;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -27,4 +28,7 @@ public class BookDto {
     @Schema(description = "Cover image of the book",
             example = "https://cover-book-image.com/12")
     private String coverImage;
+    @Schema(description = "List of Category ids",
+            example = "[1, 2]")
+    private List<Long> categoryIds;
 }
