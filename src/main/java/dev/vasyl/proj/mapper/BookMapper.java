@@ -9,6 +9,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -25,11 +26,12 @@ public interface BookMapper {
             "java(categoryMapper.toModelList(requestDto.getCategoryIds()))")
     void updateBookFromDto(CreateBookRequestDto requestDto, @MappingTarget Book entity);
 
-    BookDtoWithoutCategoryIds toBookDtoWithoutCategoryIdsPage(Book book);
+    @Named("toBookDtoWithoutCategoryId")
+    BookDtoWithoutCategoryIds toBookDtoWithoutCategoryId(Book book);
 
-    default Page<BookDtoWithoutCategoryIds> toBookDtoWithoutCategoryIdsPage(Page<Book> bookPage) {
+    default Page<BookDtoWithoutCategoryIds> toBookDtoWithoutCategoryId(Page<Book> bookPage) {
         List<BookDtoWithoutCategoryIds> dtoList = bookPage.getContent().stream()
-                .map(this::toBookDtoWithoutCategoryIdsPage)
+                .map(this::toBookDtoWithoutCategoryId)
                 .toList();
         return new PageImpl<>(dtoList, bookPage.getPageable(), bookPage.getTotalElements());
     }

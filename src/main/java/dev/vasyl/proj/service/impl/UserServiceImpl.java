@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
-    private User saveUser (User user, String encodedPassword) {
+    private User saveUser(User user, String encodedPassword) {
         user.setPassword(encodedPassword);
         Role role = roleRepository.findByName(RoleName.USER).orElseThrow(
                 () -> new EntityNotFoundException("Error when set user role"));
