@@ -3,6 +3,7 @@ package dev.vasyl.proj.dto.book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,6 +34,7 @@ public class CreateBookRequestDto {
     @Schema(description = "Cover image of the book",
             example = "https://cover-book-image.com/12")
     private String coverImage;
+    @NotEmpty
     @Schema(description = "List of Category ids",
             example = "[1, 2]")
     private List<Long> categoryIds;
