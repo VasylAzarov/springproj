@@ -1,12 +1,12 @@
 package dev.vasyl.proj.service.impl;
 
-import dev.vasyl.proj.dto.shopping.cart.CartItemDto;
 import dev.vasyl.proj.dto.shopping.cart.CartItemOperation;
+import dev.vasyl.proj.dto.shopping.cart.CartItemResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CartResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CreateCartItemRequestDto;
 import dev.vasyl.proj.dto.shopping.cart.UpdateCartItemRequestDto;
 import dev.vasyl.proj.exception.EntityNotFoundException;
-import dev.vasyl.proj.mapper.CartManagementMapper;
+import dev.vasyl.proj.mapper.ShoppingCartMapper;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.model.CartItem;
 import dev.vasyl.proj.model.ShoppingCart;
@@ -14,37 +14,39 @@ import dev.vasyl.proj.model.User;
 import dev.vasyl.proj.repository.BookRepository;
 import dev.vasyl.proj.repository.CartItemRepository;
 import dev.vasyl.proj.repository.ShoppingCartRepository;
-import dev.vasyl.proj.service.CartManagementService;
+import dev.vasyl.proj.service.ShoppingCartService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CartManagementServiceImpl implements CartManagementService {
+public class ShoppingCartServiceImpl implements ShoppingCartService {
     private static final int DEFAULT_QUANTITY = 1;
 
     private final CartItemRepository cartItemRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final BookRepository bookRepository;
-    private final CartManagementMapper cartManagementMapper;
+    private final ShoppingCartMapper shoppingCartMapper;
 
     @Override
     public CartResponseDto getCart(User user) {
-        return cartManagementMapper.toCartDto(getShoppingCartByUserId(user.getId()));
+        return shoppingCartMapper.toCartDto(getShoppingCartByUserId(user.getId()));
     }
 
     @Override
-    public Page<CartItemDto> findAll(User user, Pageable pageable) {
+    public Page<CartItemResponseDto> findAll(User user, Pageable pageable) {
         Long cartId = getShoppingCartByUserId(user.getId()).getId();
         Page<CartItem> cartItemPage = cartItemRepository.findAllByShoppingCartId(cartId, pageable);
-        return cartManagementMapper.toCartItemsDtoPage(cartItemPage);
+        return shoppingCartMapper.toCartItemsDtoPage(cartItemPage);
     }
 
+    @Transactional
     @Override
-    public CartItemDto save(User user, CreateCartItemRequestDto createCartItemRequestDto) {
+    public CartItemResponseDto save(User user, CreateCartItemRequestDto createCartItemRequestDto) {
         Book book = getBookById(createCartItemRequestDto.bookId());
         ShoppingCart shoppingCart = getShoppingCartByUserId(user.getId());
         CartItem cartItem = getCartItemIfExist(shoppingCart, book);
@@ -56,19 +58,21 @@ public class CartManagementServiceImpl implements CartManagementService {
             cartItem.setBook(book);
             cartItem.setQuantity(DEFAULT_QUANTITY);
         }
-        return cartManagementMapper.toCartItemDto(cartItemRepository.save(cartItem));
+        return shoppingCartMapper.toCartItemDto(cartItemRepository.save(cartItem));
     }
 
+    @Transactional
     @Override
-    public CartItemDto update(Long id, UpdateCartItemRequestDto updateCartItemDto) {
+    public CartItemResponseDto update(Long id, UpdateCartItemRequestDto updateCartItemDto) {
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Can`t find CartItem entity by id: " + id));
         int calculatedQuantity = getCalculatedQuantity(cartItem, updateCartItemDto);
         cartItem.setQuantity(calculatedQuantity);
-        return cartManagementMapper.toCartItemDto(cartItemRepository.save(cartItem));
+        return shoppingCartMapper.toCartItemDto(cartItemRepository.save(cartItem));
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         cartItemRepository.deleteById(id);
@@ -106,5 +110,11 @@ public class CartManagementServiceImpl implements CartManagementService {
         return updateCartItemDto.operation() == CartItemOperation.DECREASE
                 ? currentQuantity - change
                 : currentQuantity + change;
+    }
+
+    public void createShoppingCartForUser(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 }

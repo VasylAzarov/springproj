@@ -1,7 +1,7 @@
 package dev.vasyl.proj.mapper;
 
 import dev.vasyl.proj.config.MapperConfig;
-import dev.vasyl.proj.dto.shopping.cart.CartItemDto;
+import dev.vasyl.proj.dto.shopping.cart.CartItemResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CartResponseDto;
 import dev.vasyl.proj.model.CartItem;
 import dev.vasyl.proj.model.ShoppingCart;
@@ -16,12 +16,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 @Mapper(config = MapperConfig.class, uses = BookMapper.class)
-public interface CartManagementMapper {
+public interface ShoppingCartMapper {
 
     @Mappings({
             @Mapping(target = "bookId", source = "book.id"),
             @Mapping(target = "bookTitle", source = "book.title")})
-    CartItemDto toCartItemDto(CartItem cartItem);
+    CartItemResponseDto toCartItemDto(CartItem cartItem);
 
     @Mappings({
             @Mapping(target = "cartItems", source = "cartItems",
@@ -31,8 +31,8 @@ public interface CartManagementMapper {
     CartResponseDto toCartDto(ShoppingCart shoppingCartByUserId);
 
     @Named("cartItemsSetToFirstPageCartItemDto")
-    default Page<CartItemDto> cartItemsSetToFirstPageCartItemDto(Set<CartItem> cartItems) {
-        List<CartItemDto> dtoList = cartItems.stream()
+    default Page<CartItemResponseDto> cartItemsSetToFirstPageCartItemDto(Set<CartItem> cartItems) {
+        List<CartItemResponseDto> dtoList = cartItems.stream()
                 .map(this::toCartItemDto)
                 .toList();
         return dtoList.isEmpty()
@@ -41,8 +41,8 @@ public interface CartManagementMapper {
     }
 
     @Named("toCartItemsDtoPage")
-    default Page<CartItemDto> toCartItemsDtoPage(Page<CartItem> cartItemPage) {
-        List<CartItemDto> dtoList = cartItemPage.getContent().stream()
+    default Page<CartItemResponseDto> toCartItemsDtoPage(Page<CartItem> cartItemPage) {
+        List<CartItemResponseDto> dtoList = cartItemPage.getContent().stream()
                 .map(this::toCartItemDto)
                 .toList();
         return new PageImpl<>(dtoList, cartItemPage.getPageable(),

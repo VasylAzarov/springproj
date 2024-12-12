@@ -13,5 +13,5 @@ public class CartResponseDto {
             example = "1")
     private Long userId;
     @Schema(description = "Page of cart Items")
-    private Page<CartItemDto> cartItems;
+    private Page<CartItemResponseDto> cartItems;
 }

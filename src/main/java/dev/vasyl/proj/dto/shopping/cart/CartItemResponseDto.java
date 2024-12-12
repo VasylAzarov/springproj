@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class CartItemDto {
+public class CartItemResponseDto {
     @Schema(description = "Cart item id",
             example = "1")
     private Long id;
