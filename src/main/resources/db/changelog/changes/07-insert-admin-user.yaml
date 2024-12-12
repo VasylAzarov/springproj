@@ -8,16 +8,16 @@ databaseChangeLog:
             onFail: MARK_RAN
             sqlCheck:
               expectedResult: 0
-              sql: SELECT COUNT(*) FROM users WHERE email = 'Admin'
+              sql: SELECT COUNT(*) FROM users WHERE email = 'Admin@Admin.com'
         - insert:
             tableName: users
             columns:
               - column:
                   name: email
-                  value: Admin
+                  value: Admin@Admin.com
               - column:
                   name: password
-                  value: $2a$10$n06Dz0th8t72eBm.rgqNEe3q0P/njMXeMN8ljWsBL3wIzxjeQc5bi
+                  value: $2a$10$VQ/lk31RlMY.aX1E0yabHORY8t7kKXlzEm66J0JSY4JapLrTcc9Fi
               - column:
                   name: first_name
                   value: Admin
@@ -34,7 +34,7 @@ databaseChangeLog:
               - column:
                   name: user_id
                   valueComputed: |
-                    (SELECT id FROM users WHERE email = 'Admin')
+                    (SELECT id FROM users WHERE email = 'Admin@Admin.com')
               - column:
                   name: role_id
                   valueComputed: |

@@ -1,6 +1,7 @@
 package dev.vasyl.proj.service.impl;
 
 import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.BookDtoWithoutCategoryIds;
 import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import dev.vasyl.proj.exception.EntityAlreadyExistsException;
 import dev.vasyl.proj.exception.EntityNotFoundException;
@@ -31,8 +32,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookDto> findAll(Pageable pageable) {
-        return bookMapper.toBookDtoPage(bookRepository.findAll(pageable));
+    public Page<BookDtoWithoutCategoryIds> findAll(Pageable pageable) {
+        return bookMapper.toBookDtoWithoutCategoryIdsPage(bookRepository.findAll(pageable));
     }
 
     @Override
@@ -55,4 +56,5 @@ public class BookServiceImpl implements BookService {
     public void deleteById(Long id) {
         bookRepository.deleteById(id);
     }
+
 }

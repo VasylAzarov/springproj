@@ -1,6 +1,7 @@
 package dev.vasyl.proj.controller;
 
 import dev.vasyl.proj.dto.book.BookDto;
+import dev.vasyl.proj.dto.book.BookDtoWithoutCategoryIds;
 import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import dev.vasyl.proj.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,7 @@ public class BookController {
     @Operation(summary = "Get Book page",
             description = "Get Book page by page params or/and sort params."
                     + " Available for User and Admin roles")
-    public Page<BookDto> getAll(@ParameterObject
+    public Page<BookDtoWithoutCategoryIds> getAll(@ParameterObject
                                     @PageableDefault(size = 20, sort = "title",
                                             direction = Sort.Direction.ASC)
                                             Pageable pageable) {
