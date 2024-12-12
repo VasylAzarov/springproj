@@ -63,6 +63,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Update category data",
             description = "Update category data. Available for Admin role")
     public CategoryDto updateCategoryById(@PathVariable Long id,
