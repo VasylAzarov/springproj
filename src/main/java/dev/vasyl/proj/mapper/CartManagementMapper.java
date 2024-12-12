@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,11 +18,16 @@ import org.springframework.data.domain.PageRequest;
 @Mapper(config = MapperConfig.class, uses = BookMapper.class)
 public interface CartManagementMapper {
 
-    @Mapping(target = "bookDto", source = "book", qualifiedByName = "toBookDtoWithoutCategoryId")
+    @Mappings({
+            @Mapping(target = "bookId", source = "book.id"),
+            @Mapping(target = "bookTitle", source = "book.title")})
     CartItemDto toCartItemDto(CartItem cartItem);
 
-    @Mapping(target = "cartItems", source = "cartItems",
-            qualifiedByName = "cartItemsSetToFirstPageCartItemDto")
+    @Mappings({
+            @Mapping(target = "cartItems", source = "cartItems",
+                    qualifiedByName = "cartItemsSetToFirstPageCartItemDto"),
+            @Mapping(target = "userId", source = "user.id"),
+    })
     CartResponseDto toCartDto(ShoppingCart shoppingCartByUserId);
 
     @Named("cartItemsSetToFirstPageCartItemDto")

@@ -5,9 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateCartItemRequestDto(
-        @Schema(description = "Operation increase quantity or decrease quantity",
+        @Schema(description = "Operation increase(be default) quantity or decrease quantity",
                 example = "INCREASE")
-        @NotNull
         CartItemOperation operation,
         @Schema(description = "quantity",
                 example = "3")
