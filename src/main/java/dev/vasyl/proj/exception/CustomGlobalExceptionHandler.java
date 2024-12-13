@@ -63,6 +63,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return processHandlingException(ex, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(InsufficientItemsException.class)
+    protected ResponseEntity<Object> handleEntityAlreadyExistsException(
+            InsufficientItemsException ex, WebRequest request) {
+        return processHandlingException(ex, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     private ResponseEntity<Object> processHandlingException(RuntimeException ex,
                                                             HttpStatus status) {
         Map<String, Object> body = new LinkedHashMap<>();

@@ -5,7 +5,6 @@ import dev.vasyl.proj.dto.shopping.cart.CartItemResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CartResponseDto;
 import dev.vasyl.proj.model.CartItem;
 import dev.vasyl.proj.model.ShoppingCart;
-import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,20 +31,17 @@ public interface ShoppingCartMapper {
 
     @Named("cartItemsSetToFirstPageCartItemDto")
     default Page<CartItemResponseDto> cartItemsSetToFirstPageCartItemDto(Set<CartItem> cartItems) {
-        List<CartItemResponseDto> dtoList = cartItems.stream()
-                .map(this::toCartItemDto)
-                .toList();
-        return dtoList.isEmpty()
-                ? Page.empty()
-                : new PageImpl<>(dtoList, PageRequest.of(0, dtoList.size()), dtoList.size());
+        return new PageImpl<>(
+                cartItems.stream()
+                        .map(this::toCartItemDto)
+                        .toList(),
+                PageRequest.of(0, Math.max(cartItems.size(), 1)),
+                cartItems.size()
+        );
     }
 
     @Named("toCartItemsDtoPage")
     default Page<CartItemResponseDto> toCartItemsDtoPage(Page<CartItem> cartItemPage) {
-        List<CartItemResponseDto> dtoList = cartItemPage.getContent().stream()
-                .map(this::toCartItemDto)
-                .toList();
-        return new PageImpl<>(dtoList, cartItemPage.getPageable(),
-                cartItemPage.getTotalElements());
+        return cartItemPage.map(this::toCartItemDto);
     }
 }

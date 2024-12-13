@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-shoping_carts-table
+      id: create-shopping_carts-table
       author: vasyl
       runOnChange: true
       changes:
