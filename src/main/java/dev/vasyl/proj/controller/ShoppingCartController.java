@@ -1,6 +1,5 @@
 package dev.vasyl.proj.controller;
 
-import dev.vasyl.proj.dto.shopping.cart.CartItemResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CartResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CreateCartItemRequestDto;
 import dev.vasyl.proj.dto.shopping.cart.UpdateCartItemRequestDto;
@@ -44,7 +43,7 @@ public class ShoppingCartController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add item to user cart",
             description = "Add item to user cart. Available for User")
-    public CartItemResponseDto addItem(@AuthenticationPrincipal User user,
+    public CartResponseDto addItem(@AuthenticationPrincipal User user,
                                        @RequestBody
                                @Valid CreateCartItemRequestDto createCartItemRequestDto) {
         return shoppingCartService.save(user, createCartItemRequestDto);
@@ -54,7 +53,7 @@ public class ShoppingCartController {
     @PutMapping("/items/{cartItemId}")
     @Operation(summary = "Update item quantity in user cart",
             description = "Update item quantity in user cart. Available for User")
-    public CartItemResponseDto updateItem(@PathVariable Long cartItemId,
+    public CartResponseDto updateItem(@PathVariable Long cartItemId,
                                           @RequestBody
                                           @Valid UpdateCartItemRequestDto cartItemRequestDto) {
         return shoppingCartService.update(cartItemId, cartItemRequestDto);

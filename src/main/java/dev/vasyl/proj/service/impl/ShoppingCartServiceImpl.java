@@ -1,7 +1,6 @@
 package dev.vasyl.proj.service.impl;
 
 import dev.vasyl.proj.dto.shopping.cart.CartItemOperation;
-import dev.vasyl.proj.dto.shopping.cart.CartItemResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CartResponseDto;
 import dev.vasyl.proj.dto.shopping.cart.CreateCartItemRequestDto;
 import dev.vasyl.proj.dto.shopping.cart.UpdateCartItemRequestDto;
@@ -19,8 +18,6 @@ import dev.vasyl.proj.service.ShoppingCartService;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,16 +36,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.toCartDto(getShoppingCartByUserId(user.getId()));
     }
 
-    @Override
-    public Page<CartItemResponseDto> findAll(User user, Pageable pageable) {
-        Long cartId = getShoppingCartByUserId(user.getId()).getId();
-        Page<CartItem> cartItemPage = cartItemRepository.findAllByShoppingCartId(cartId, pageable);
-        return shoppingCartMapper.toCartItemsDtoPage(cartItemPage);
-    }
-
     @Transactional
     @Override
-    public CartItemResponseDto save(User user, CreateCartItemRequestDto createCartItemRequestDto) {
+    public CartResponseDto save(User user, CreateCartItemRequestDto createCartItemRequestDto) {
         Book book = getBookById(createCartItemRequestDto.bookId());
         ShoppingCart shoppingCart = getShoppingCartByUserId(user.getId());
         Optional<CartItem> optionalCartItem = getCartItemIfExist(shoppingCart, book);
@@ -62,18 +52,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItem.setBook(book);
             cartItem.setQuantity(DEFAULT_QUANTITY);
         }
-        return shoppingCartMapper.toCartItemDto(cartItemRepository.save(cartItem));
+        cartItemRepository.save(cartItem);
+        return shoppingCartMapper.toCartDto(shoppingCart);
     }
 
     @Transactional
     @Override
-    public CartItemResponseDto update(Long id, UpdateCartItemRequestDto updateCartItemDto) {
+    public CartResponseDto update(Long id, UpdateCartItemRequestDto updateCartItemDto) {
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         "Can`t find CartItem entity by id: " + id));
         int calculatedQuantity = getCalculatedQuantity(cartItem, updateCartItemDto);
         cartItem.setQuantity(calculatedQuantity);
-        return shoppingCartMapper.toCartItemDto(cartItemRepository.save(cartItem));
+        cartItemRepository.save(cartItem);
+        return shoppingCartMapper.toCartDto(cartItem.getShoppingCart());
     }
 
     @Transactional

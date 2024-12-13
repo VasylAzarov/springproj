@@ -39,9 +39,4 @@ public interface ShoppingCartMapper {
                 cartItems.size()
         );
     }
-
-    @Named("toCartItemsDtoPage")
-    default Page<CartItemResponseDto> toCartItemsDtoPage(Page<CartItem> cartItemPage) {
-        return cartItemPage.map(this::toCartItemDto);
-    }
 }
