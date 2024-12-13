@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -42,7 +43,6 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(user);
     }
 
-    @Transactional
     private User saveUser(User user, String encodedPassword) {
         user.setPassword(encodedPassword);
         Role role = roleRepository.findByName(RoleName.USER).orElseThrow(

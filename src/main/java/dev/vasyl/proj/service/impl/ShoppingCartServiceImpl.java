@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private static final int DEFAULT_QUANTITY = 1;
 
@@ -36,7 +37,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.toCartDto(getShoppingCartByUserId(user.getId()));
     }
 
-    @Transactional
     @Override
     public CartResponseDto save(User user, CreateCartItemRequestDto createCartItemRequestDto) {
         Book book = getBookById(createCartItemRequestDto.bookId());
@@ -56,7 +56,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.toCartDto(shoppingCart);
     }
 
-    @Transactional
     @Override
     public CartResponseDto update(Long id, UpdateCartItemRequestDto updateCartItemDto) {
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(
@@ -68,7 +67,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.toCartDto(cartItem.getShoppingCart());
     }
 
-    @Transactional
     @Override
     public void deleteById(Long id) {
         cartItemRepository.deleteById(id);
