@@ -33,7 +33,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Page<BookDtoWithoutCategoryIds> findAll(Pageable pageable) {
-        return bookMapper.toBookDtoWithoutCategoryIdsPage(bookRepository.findAll(pageable));
+        return bookMapper.toBookDtoWithoutCategoryId(bookRepository.findAll(pageable));
     }
 
     @Override

@@ -55,6 +55,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new category",
             description = "Create a new category. Available for Admin role")
     public CategoryDto createCategory(@RequestBody @Valid CreateCategoryRequestDto requestDto) {

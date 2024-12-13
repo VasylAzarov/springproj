@@ -10,19 +10,23 @@ import dev.vasyl.proj.model.RoleName;
 import dev.vasyl.proj.model.User;
 import dev.vasyl.proj.repository.RoleRepository;
 import dev.vasyl.proj.repository.UserRepository;
+import dev.vasyl.proj.service.ShoppingCartService;
 import dev.vasyl.proj.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -32,12 +36,20 @@ public class UserServiceImpl implements UserService {
                     + requestDto.getEmail()
                     + "] already exist");
         }
-        User user = userMapper.toModel(requestDto);
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+
+        User user = saveUser(userMapper.toModel(requestDto),
+                passwordEncoder.encode(requestDto.getPassword()));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    private User saveUser(User user, String encodedPassword) {
+        user.setPassword(encodedPassword);
         Role role = roleRepository.findByName(RoleName.USER).orElseThrow(
                 () -> new EntityNotFoundException("Error when set user role"));
         user.setRoles(Set.of(role));
         userRepository.save(user);
-        return userMapper.toUserResponse(user);
+        shoppingCartService.createShoppingCartForUser(user);
+        return user;
     }
 }
