@@ -69,6 +69,12 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return processHandlingException(ex, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(OrderProcessingException.class)
+    protected ResponseEntity<Object> handleEntityAlreadyExistsException(
+            OrderProcessingException ex, WebRequest request) {
+        return processHandlingException(ex, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     private ResponseEntity<Object> processHandlingException(RuntimeException ex,
                                                             HttpStatus status) {
         Map<String, Object> body = new LinkedHashMap<>();

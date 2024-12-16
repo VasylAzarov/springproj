@@ -17,7 +17,7 @@ public class CartItemResponseDto {
             example = "Book title")
     private String bookTitle;
 
-    @Schema(description = "Cart item йгфтешен id",
+    @Schema(description = "Cart item quantity",
             example = "1")
     private int quantity;
 }
