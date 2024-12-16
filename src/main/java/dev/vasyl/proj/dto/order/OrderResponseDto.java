@@ -1,10 +1,10 @@
 package dev.vasyl.proj.dto.order;
 
-import dev.vasyl.proj.model.Status;
+import dev.vasyl.proj.model.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -18,7 +18,7 @@ public class OrderResponseDto {
     private Long userId;
 
     @Schema(description = "Order items page")
-    private List<OrderItemResponseDto> orderItems;
+    private Set<OrderItemResponseDto> orderItems;
 
     @Schema(description = "Local date time",
             example = "2024-12-13T14:00:00")
@@ -43,5 +43,5 @@ public class OrderResponseDto {
                         FAILED
                     """,
             example = "PENDING")
-    private Status status;
+    private Order.Status status;
 }

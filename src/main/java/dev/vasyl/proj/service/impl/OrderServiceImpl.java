@@ -4,22 +4,19 @@ import dev.vasyl.proj.dto.order.OrderItemResponseDto;
 import dev.vasyl.proj.dto.order.OrderResponseDto;
 import dev.vasyl.proj.dto.order.PlaceOrderRequestDto;
 import dev.vasyl.proj.dto.order.UpdateOrderStatusRequestDto;
-import dev.vasyl.proj.exception.CartEmptyException;
 import dev.vasyl.proj.exception.EntityNotFoundException;
+import dev.vasyl.proj.exception.OrderProcessingException;
 import dev.vasyl.proj.mapper.OrderMapper;
 import dev.vasyl.proj.model.CartItem;
 import dev.vasyl.proj.model.Order;
 import dev.vasyl.proj.model.OrderItem;
 import dev.vasyl.proj.model.ShoppingCart;
-import dev.vasyl.proj.model.Status;
 import dev.vasyl.proj.model.User;
-import dev.vasyl.proj.repository.CartItemRepository;
 import dev.vasyl.proj.repository.OrderItemRepository;
 import dev.vasyl.proj.repository.OrderRepository;
 import dev.vasyl.proj.repository.ShoppingCartRepository;
 import dev.vasyl.proj.service.OrderService;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +32,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
     private final ShoppingCartRepository shoppingCartRepository;
-    private final CartItemRepository cartItemRepository;
     private final OrderMapper orderMapper;
 
     @Override
@@ -63,19 +59,19 @@ public class OrderServiceImpl implements OrderService {
                                  PlaceOrderRequestDto placeOrderRequestDto) {
         ShoppingCart shoppingCart = getShoppingCartByUserId(user.getId());
         if (shoppingCart.getCartItems().isEmpty()) {
-            throw new CartEmptyException("Can`t create order with empty cart! user id:"
+            throw new OrderProcessingException("Can`t create order with empty cart! user id:"
                     + user.getId());
         }
         Order order = new Order();
         Set<OrderItem> orderItems = convertToOrderItemSet(shoppingCart.getCartItems(), order);
         order.setUser(user);
-        order.setStatus(Status.PENDING);
-        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(Order.Status.PENDING);
         order.setOrderItems(orderItems);
         order.setTotal(calculateTotalPriceByOrderItems(orderItems));
         order.setShippingAddress(placeOrderRequestDto.shippingAddress());
         orderRepository.save(order);
-        cartItemRepository.deleteAllByShoppingCartId(shoppingCart.getId());
+        shoppingCart.getCartItems().forEach(cartItem -> cartItem.setDeleted(true));
+        shoppingCartRepository.save(shoppingCart);
         return orderMapper.toOrderResponseDto(order);
     }
 
@@ -112,13 +108,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BigDecimal calculateTotalPriceByOrderItems(Set<OrderItem> orderItems) {
-        return BigDecimal
-                .valueOf(orderItems.stream()
-                        .mapToDouble(orderItem ->
-                                (orderItem.getQuantity() * orderItem
-                                        .getBook()
-                                        .getPrice()
-                                        .doubleValue()))
-                        .sum());
+        return orderItems.stream()
+                .map(orderItem ->
+                        orderItem.getBook()
+                                .getPrice()
+                                .multiply(BigDecimal
+                                        .valueOf(orderItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

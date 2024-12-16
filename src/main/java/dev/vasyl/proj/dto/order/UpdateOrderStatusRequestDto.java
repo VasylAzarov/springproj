@@ -1,6 +1,6 @@
 package dev.vasyl.proj.dto.order;
 
-import dev.vasyl.proj.model.Status;
+import dev.vasyl.proj.model.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,6 +19,6 @@ public record UpdateOrderStatusRequestDto(
                     CANCELLED,
                     FAILED""",
                 example = "PENDING")
-        @NotNull(message = "Status can`t be empty")
-        Status status) {
+        @NotNull(message = "Status can`t be null")
+        Order.Status status) {
 }

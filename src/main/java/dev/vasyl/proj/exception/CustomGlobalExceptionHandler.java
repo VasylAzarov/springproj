@@ -69,9 +69,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return processHandlingException(ex, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(CartEmptyException.class)
+    @ExceptionHandler(OrderProcessingException.class)
     protected ResponseEntity<Object> handleEntityAlreadyExistsException(
-            CartEmptyException ex, WebRequest request) {
+            OrderProcessingException ex, WebRequest request) {
         return processHandlingException(ex, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
