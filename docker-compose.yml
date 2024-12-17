@@ -20,7 +20,7 @@ services:
     depends_on:
       - mysqldb
     restart: on-failure
-    image: bookapp
+    image: springproj
     build: .
     env_file: ./.env
     ports:
@@ -28,10 +28,10 @@ services:
       - ${DEBUG_PORT}:${DEBUG_PORT}
     environment:
       SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/${MYSQLDB_DATABASE}?serverTimeZone=UTC&createDatabaseIfNotExist=true",
+        "spring.datasource.url": "jdbc:mysql://mysqldb:${MYSQLDB_DOCKER_PORT}/${MYSQLDB_DATABASE}?serverTimeZone=UTC&createDatabaseIfNotExist=true",
         "spring.datasource.username": "${MYSQLDB_USER}",
         "spring.datasource.password": "${MYSQLDB_ROOT_PASSWORD}",
         "spring.datasource.driver-class-name" : "${SPRING_DATASOURCE_DRIVER_CLASS_NAME}",
         "server.servlet.context-path": "${SERVER_SERVLET_CONTEXT_PATH}"
       }'
-      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${DEBUG_PORT}"
