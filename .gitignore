@@ -8,6 +8,7 @@ mvnw.cmd
 .idea/
 *.iml
 .DS_Store
+.env
 
 # IntelliJ IDEA
 .idea/
