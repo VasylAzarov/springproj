@@ -25,10 +25,7 @@ import dev.vasyl.proj.dto.book.CreateBookRequestDto;
 import dev.vasyl.proj.security.JwtUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,12 +59,16 @@ public class BookControllerTests {
                 .build();
     }
 
+    @AfterAll
+    static void afterAll(@Autowired DataSource dataSource) {
+        executeSqlScript(dataSource, CLEAR_BOOKS_AND_CATEGORIES);
+    }
+
     @BeforeEach
     void beforeEach(@Autowired DataSource dataSource) {
         executeSqlScript(dataSource, CLEAR_BOOKS_AND_CATEGORIES);
         executeSqlScript(dataSource, DB_PATH_ADD_BOOKS_WITH_CATEGORIES);
     }
-
 
     @SneakyThrows
     static void executeSqlScript(DataSource dataSource, String dbPath) {

@@ -16,10 +16,7 @@ import dev.vasyl.proj.dto.category.CreateCategoryRequestDto;
 import dev.vasyl.proj.security.JwtUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +47,11 @@ public class CategoryControllerTests {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @AfterAll
+    static void afterAll(@Autowired DataSource dataSource) {
+        executeSqlScript(dataSource, CLEAR_CATEGORIES);
+    }
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext applicationContext) {
