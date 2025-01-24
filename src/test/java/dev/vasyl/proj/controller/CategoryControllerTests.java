@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -41,6 +40,8 @@ public class CategoryControllerTests {
     private static final String CONTROLLER_ENDPOINT = "/categories";
     private static final String DB_PATH_ADD_CATEGORIES = "database/category/add-categories.sql";
     private static final String CLEAR_CATEGORIES = "database/category/clear-categories.sql";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -67,7 +68,6 @@ public class CategoryControllerTests {
         executeSqlScript(dataSource, DB_PATH_ADD_CATEGORIES);
     }
 
-
     @SneakyThrows
     static void executeSqlScript(DataSource dataSource, String dbPath) {
         try (Connection connection = dataSource.getConnection()) {
@@ -82,14 +82,17 @@ public class CategoryControllerTests {
     @DisplayName("Verify that all categories is returned successfully")
     void getAll_twoCategoriesInDb_returnsAllCategoriesDto() throws Exception {
         List<CategoryDto> categoriesDto = getCategoriesDto();
+
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT)
-                        .header("Authorization", "Bearer " + getUserToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
+
         JsonNode root = objectMapper.readTree(result.getResponse().getContentAsByteArray());
         CategoryDto[] actualListOfBooks =
                 objectMapper.treeToValue(root.get("content"), CategoryDto[].class);
+
         assertNotNull(actualListOfBooks);
         assertEquals(2, actualListOfBooks.length);
         assertEquals(categoriesDto, Arrays.stream(actualListOfBooks).toList());
@@ -100,13 +103,16 @@ public class CategoryControllerTests {
     void getCategoryById_correctId_returnsCategoryDto() throws Exception {
         long bookId = 1L;
         CategoryDto expectedCategory = getCategoryDto();
+
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header("Authorization", "Bearer " + getUserToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
+
         CategoryDto actualCategory = objectMapper.readValue(
                 result.getResponse().getContentAsByteArray(), CategoryDto.class);
+
         assertNotNull(actualCategory);
         assertEquals(expectedCategory, actualCategory);
     }
@@ -117,14 +123,17 @@ public class CategoryControllerTests {
         CreateCategoryRequestDto requestDto = getNewCreateCategoryRequestDto();
         CategoryDto expectedCategory = getCategoryDtoByRequestDto(3L, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
         MvcResult result = mockMvc.perform(post(CONTROLLER_ENDPOINT)
-                        .header("Authorization", "Bearer " + getAdminToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
                 .andReturn();
+
         CategoryDto actualCategory = objectMapper.readValue(
                 result.getResponse().getContentAsString(), CategoryDto.class);
+
         assertNotNull(actualCategory.getId());
         EqualsBuilder.reflectionEquals(expectedCategory, actualCategory, "id");
     }
@@ -136,14 +145,17 @@ public class CategoryControllerTests {
         CreateCategoryRequestDto requestDto = getNewCreateCategoryRequestDto();
         CategoryDto expectedCategory = getCategoryDtoByRequestDto(categoryId, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
+
         MvcResult result = mockMvc.perform(put(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header("Authorization", "Bearer " + getAdminToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
                 .andReturn();
+
         CategoryDto actualCategory = objectMapper.readValue(
                 result.getResponse().getContentAsString(), CategoryDto.class);
+
         assertNotNull(actualCategory.getId());
         EqualsBuilder.reflectionEquals(expectedCategory, actualCategory, "id");
     }
@@ -152,20 +164,20 @@ public class CategoryControllerTests {
     @DisplayName("Verify that category is deleted successfully when id correct")
     void deleteCategoryById_correctId_returnsNoContentStatus() throws Exception {
         long categoryId = 2L;
+
         mockMvc.perform(delete(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header("Authorization", "Bearer " + getAdminToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
         mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header("Authorization", "Bearer " + getUserToken())
+                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
 
     private List<CategoryDto> getCategoriesDto() {
-        List<CategoryDto> expected = new ArrayList<>();
         CategoryDto category1 = new CategoryDto();
         category1.setId(1L);
         category1.setName("Category 1");
@@ -175,9 +187,9 @@ public class CategoryControllerTests {
         category2.setName("Category 2");
         category2.setDescription("Category 2");
 
+        List<CategoryDto> expected = new ArrayList<>();
         expected.add(category1);
         expected.add(category2);
-
         return expected;
     }
 

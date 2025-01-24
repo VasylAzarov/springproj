@@ -88,6 +88,9 @@ public class BookServiceTests {
         assertNotNull(result);
         assertEquals(bookDto.getId(), result.getId());
         verify(bookRepository, times(1)).save(any(Book.class));
+        verify(bookRepository, times(1)).existsByIsbn(anyString());
+        verify(bookMapper, times(1)).toModel(any(CreateBookRequestDto.class));
+        verify(bookMapper, times(1)).toDto(any(Book.class));
     }
 
     @Test
@@ -118,9 +121,11 @@ public class BookServiceTests {
         when(bookMapper.toBookDtoWithoutCategoryId(bookPage)).thenReturn(bookDtoPage);
 
         Page<BookDtoWithoutCategoryIds> result = bookService.findAll(pageable);
+
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
         verify(bookRepository, times(1)).findAll(pageable);
+        verify(bookMapper, times(1)).toBookDtoWithoutCategoryId(bookPage);
     }
 
     @Test

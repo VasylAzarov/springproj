@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,7 @@ import dev.vasyl.proj.dto.category.CreateCategoryRequestDto;
 import dev.vasyl.proj.exception.EntityNotFoundException;
 import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.mapper.CategoryMapper;
+import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.model.Category;
 import dev.vasyl.proj.repository.BookRepository;
 import dev.vasyl.proj.repository.CategoryRepository;
@@ -29,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +56,7 @@ public class CategoryServiceTests {
     void findAll_shouldReturnPageOfCategories_whenPageableProvided() {
         Pageable pageable = mock(Pageable.class);
         Page<Category> categories = new PageImpl<>(Collections.emptyList());
+
         when(categoryRepository.findAll(pageable)).thenReturn(categories);
         when(categoryMapper.toCategoryDtoPage(categories)).thenReturn(Page.empty());
 
@@ -70,7 +74,8 @@ public class CategoryServiceTests {
         Long id = 1L;
         Category category = new Category();
         CategoryDto categoryDto = new CategoryDto();
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
 
         CategoryDto result = categoryService.findById(id);
@@ -84,6 +89,7 @@ public class CategoryServiceTests {
     @DisplayName("Verify that exception is thrown when category doesn't exist")
     void findById_shouldThrowException_whenIdDoesNotExist() {
         Long id = 1L;
+
         when(categoryRepository.findById(id)).thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
@@ -99,6 +105,7 @@ public class CategoryServiceTests {
         CreateCategoryRequestDto requestDto = new CreateCategoryRequestDto();
         Category category = new Category();
         CategoryDto categoryDto = new CategoryDto();
+
         when(categoryMapper.toModel(requestDto)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
@@ -106,26 +113,27 @@ public class CategoryServiceTests {
         CategoryDto result = categoryService.save(requestDto);
 
         assertNotNull(result);
-        verify(categoryMapper).toModel(requestDto);
-        verify(categoryRepository).save(category);
-        verify(categoryMapper).toDto(category);
+        verify(categoryMapper, times(1)).toModel(requestDto);
+        verify(categoryMapper, times(1)).toDto(category);
+        verify(categoryRepository, times(1)).save(category);
     }
 
     @Test
-    @DisplayName("Verify that page of books returned successfully when category id exist")
+    @DisplayName("Verify that page of books returned successfully when category id exists")
     void getBooksById_shouldReturnPageOfBooks_whenIdExists() {
         Long id = 1L;
-        Pageable pageable = mock(Pageable.class);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<BookDto> books = new PageImpl<>(Collections.emptyList());
-        when(bookRepository.findByCategoriesId(id, pageable))
-                .thenReturn(new PageImpl<>(Collections.emptyList()));
-        when(bookMapper.toBookDtoPage(any(Page.class))).thenReturn(books);
+        Page<Book> bookPage = new PageImpl<>(Collections.emptyList());
+
+        when(bookRepository.findByCategoriesId(id, pageable)).thenReturn(bookPage);
+        when(bookMapper.toBookDtoPage(bookPage)).thenReturn(books);
 
         Page<BookDto> result = categoryService.getBooksById(id, pageable);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(bookRepository).findByCategoriesId(id, pageable);
-        verify(bookMapper).toBookDtoPage(any(Page.class));
+        verify(bookRepository, times(1)).findByCategoriesId(id, pageable);
+        verify(bookMapper, times(1)).toBookDtoPage(bookPage);
     }
 }
