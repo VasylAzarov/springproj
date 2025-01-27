@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import dev.vasyl.proj.dto.book.BookDto;
 import dev.vasyl.proj.dto.book.BookDtoWithoutCategoryIds;
 import dev.vasyl.proj.dto.book.CreateBookRequestDto;
+import dev.vasyl.proj.security.JwtUtil;
 import dev.vasyl.proj.util.TestUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
@@ -50,7 +51,7 @@ public class BookControllerTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private TestUtil testUtil;
+    private JwtUtil jwtUtil;
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext applicationContext) {
@@ -84,12 +85,12 @@ public class BookControllerTests {
     @Test
     @DisplayName("Verify that book is created successfully when requestDto correct")
     void createBook_correctRequestDto_returnsCreatedBook() throws Exception {
-        CreateBookRequestDto requestDto = testUtil.getNewCreateBookRequestDto();
-        BookDto expectedBook = testUtil.getBookDtoByRequestDto(4L, requestDto);
+        CreateBookRequestDto requestDto = TestUtil.getNewCreateBookRequestDto();
+        BookDto expectedBook = TestUtil.getBookDtoByRequestDto(4L, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(post(CONTROLLER_ENDPOINT)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
@@ -107,10 +108,10 @@ public class BookControllerTests {
     @Test
     @DisplayName("Verify that all books is returned successfully")
     void getAll_threeBooksInDb_returnsAllBooksDtoWithoutCategoryId() throws Exception {
-        List<BookDtoWithoutCategoryIds> expectedListOfBooks = testUtil.getBooksDtoWithNoCategories();
+        List<BookDtoWithoutCategoryIds> expectedListOfBooks = TestUtil.getBooksDtoWithNoCategories();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -128,12 +129,12 @@ public class BookControllerTests {
     @DisplayName("Verify that book is updated successfully when requestDto correct")
     void updateBookById_correctRequestDto_returnsUpdatedBook() throws Exception {
         Long bookId = 3L;
-        CreateBookRequestDto requestDto = testUtil.getNewCreateBookRequestDto();
-        BookDto expectedBook = testUtil.getBookDtoByRequestDto(bookId, requestDto);
+        CreateBookRequestDto requestDto = TestUtil.getNewCreateBookRequestDto();
+        BookDto expectedBook = TestUtil.getBookDtoByRequestDto(bookId, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(put(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
@@ -152,10 +153,10 @@ public class BookControllerTests {
     @DisplayName("Verify that book is returned successfully when id correct")
     void getBookById_correctId_returnsBookDtoWithNoCategories() throws Exception {
         long bookId = 1L;
-        BookDtoWithoutCategoryIds expectedBook = testUtil.getBookDtoWithoutCategory();
+        BookDtoWithoutCategoryIds expectedBook = TestUtil.getBookDtoWithoutCategory();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -173,14 +174,22 @@ public class BookControllerTests {
         long bookId = 2L;
 
         mockMvc.perform(delete(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
         mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
+    }
+
+    public String getAdminToken() {
+        return jwtUtil.generateToken("admin@admin.com");
+    }
+
+    public String getUserToken() {
+        return jwtUtil.generateToken("user1@email.com");
     }
 }

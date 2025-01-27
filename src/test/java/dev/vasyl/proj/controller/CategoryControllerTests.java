@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.vasyl.proj.dto.category.CategoryDto;
 import dev.vasyl.proj.dto.category.CreateCategoryRequestDto;
+import dev.vasyl.proj.security.JwtUtil;
 import dev.vasyl.proj.util.TestUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -50,7 +51,7 @@ public class CategoryControllerTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private TestUtil testUtil;
+    private JwtUtil jwtUtil;
 
     @AfterAll
     static void afterAll(@Autowired DataSource dataSource) {
@@ -84,10 +85,10 @@ public class CategoryControllerTests {
     @Test
     @DisplayName("Verify that all categories is returned successfully")
     void getAll_twoCategoriesInDb_returnsAllCategoriesDto() throws Exception {
-        List<CategoryDto> categoriesDto = testUtil.getCategoriesDto();
+        List<CategoryDto> categoriesDto = TestUtil.getCategoriesDto();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -105,10 +106,10 @@ public class CategoryControllerTests {
     @DisplayName("Verify that category is returned successfully when id correct")
     void getCategoryById_correctId_returnsCategoryDto() throws Exception {
         long bookId = 1L;
-        CategoryDto expectedCategory = testUtil.getCategoryDto();
+        CategoryDto expectedCategory = TestUtil.getCategoryDto();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -123,12 +124,12 @@ public class CategoryControllerTests {
     @Test
     @DisplayName("Verify that category is created successfully when requestDto correct")
     void createCategory_correctRequestDto_returnsCreatedCategory() throws Exception {
-        CreateCategoryRequestDto requestDto = testUtil.getNewCreateCategoryRequestDto();
-        CategoryDto expectedCategory = testUtil.getCategoryDtoByRequestDto(3L, requestDto);
+        CreateCategoryRequestDto requestDto = TestUtil.getNewCreateCategoryRequestDto();
+        CategoryDto expectedCategory = TestUtil.getCategoryDtoByRequestDto(3L, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(post(CONTROLLER_ENDPOINT)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -145,12 +146,12 @@ public class CategoryControllerTests {
     @DisplayName("Verify that category is updated successfully when requestDto correct")
     void updateCategoryById_correctRequestDto_returnsUpdatedCategory() throws Exception {
         Long categoryId = 2L;
-        CreateCategoryRequestDto requestDto = testUtil.getNewCreateCategoryRequestDto();
-        CategoryDto expectedCategory = testUtil.getCategoryDtoByRequestDto(categoryId, requestDto);
+        CreateCategoryRequestDto requestDto = TestUtil.getNewCreateCategoryRequestDto();
+        CategoryDto expectedCategory = TestUtil.getCategoryDtoByRequestDto(categoryId, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(put(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -169,14 +170,22 @@ public class CategoryControllerTests {
         long categoryId = 2L;
 
         mockMvc.perform(delete(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
         mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
+    }
+
+    public String getAdminToken() {
+        return jwtUtil.generateToken("admin@admin.com");
+    }
+
+    public String getUserToken() {
+        return jwtUtil.generateToken("user1@email.com");
     }
 }

@@ -7,22 +7,15 @@ import dev.vasyl.proj.dto.category.CategoryDto;
 import dev.vasyl.proj.dto.category.CreateCategoryRequestDto;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.model.Category;
-import dev.vasyl.proj.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Component
 public class TestUtil {
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public List<Book> getListOfBooks() {
+    public static List<Book> getListOfBooks() {
         Category category = new Category();
         category.setId(1L);
         category.setName("Category 1");
@@ -65,7 +58,7 @@ public class TestUtil {
         return expected;
     }
 
-    public List<BookDtoWithoutCategoryIds> getBooksDtoWithNoCategories() {
+    public static List<BookDtoWithoutCategoryIds> getBooksDtoWithNoCategories() {
         BookDtoWithoutCategoryIds book1 = new BookDtoWithoutCategoryIds();
         book1.setId(1L);
         book1.setTitle("Book 1");
@@ -100,7 +93,7 @@ public class TestUtil {
         return expected;
     }
 
-    public CreateBookRequestDto getNewCreateBookRequestDto() {
+    public static CreateBookRequestDto getNewCreateBookRequestDto() {
         CreateBookRequestDto book = new CreateBookRequestDto();
         book.setTitle("Book 4");
         book.setAuthor("Author 4");
@@ -112,7 +105,7 @@ public class TestUtil {
         return book;
     }
 
-    public BookDtoWithoutCategoryIds getBookDtoWithoutCategory() {
+    public static BookDtoWithoutCategoryIds getBookDtoWithoutCategory() {
         BookDtoWithoutCategoryIds book1 = new BookDtoWithoutCategoryIds();
         book1.setId(1L);
         book1.setTitle("Book 1");
@@ -124,7 +117,7 @@ public class TestUtil {
         return book1;
     }
 
-    public BookDto getBookDtoByRequestDto(Long id, CreateBookRequestDto requestDto) {
+    public static BookDto getBookDtoByRequestDto(Long id, CreateBookRequestDto requestDto) {
         BookDto book = new BookDto();
         book.setId(id);
         book.setTitle(requestDto.getTitle());
@@ -137,7 +130,7 @@ public class TestUtil {
         return book;
     }
 
-    public Category getCategory() {
+    public static Category getCategory() {
         Category category = new Category();
         category.setId(1L);
         category.setName("Category 1");
@@ -145,7 +138,7 @@ public class TestUtil {
         return category;
     }
 
-    public Category getUnusedCategory() {
+    public static Category getUnusedCategory() {
         Category category = new Category();
         category.setId(3L);
         category.setName("Category 3");
@@ -153,7 +146,7 @@ public class TestUtil {
         return category;
     }
 
-    public Book getOneBook() {
+    public static Book getOneBook() {
         Book book = new Book();
         book.setId(1L);
         book.setTitle("Test Title");
@@ -163,7 +156,7 @@ public class TestUtil {
         return book;
     }
 
-    public BookDto getOneBookDto() {
+    public static BookDto getOneBookDto() {
         BookDto bookDto = new BookDto();
         bookDto.setId(1L);
         bookDto.setTitle("Test Title");
@@ -173,7 +166,7 @@ public class TestUtil {
         return bookDto;
     }
 
-    public CreateBookRequestDto getOneCreateBookRequestDto() {
+    public static CreateBookRequestDto getOneCreateBookRequestDto() {
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
         createBookRequestDto.setTitle("Test Title");
         createBookRequestDto.setAuthor("Test Author");
@@ -183,7 +176,7 @@ public class TestUtil {
         return createBookRequestDto;
     }
 
-    public List<CategoryDto> getCategoriesDto() {
+    public static List<CategoryDto> getCategoriesDto() {
         CategoryDto category1 = new CategoryDto();
         category1.setId(1L);
         category1.setName("Category 1");
@@ -199,14 +192,14 @@ public class TestUtil {
         return expected;
     }
 
-    public CreateCategoryRequestDto getNewCreateCategoryRequestDto() {
+    public static CreateCategoryRequestDto getNewCreateCategoryRequestDto() {
         CreateCategoryRequestDto category = new CreateCategoryRequestDto();
         category.setName("Category 3");
         category.setDescription("Category 3");
         return category;
     }
 
-    public CategoryDto getCategoryDto() {
+    public static CategoryDto getCategoryDto() {
         CategoryDto category = new CategoryDto();
         category.setId(1L);
         category.setName("Category 1");
@@ -214,20 +207,11 @@ public class TestUtil {
         return category;
     }
 
-    public CategoryDto getCategoryDtoByRequestDto(Long id, CreateCategoryRequestDto requestDto) {
+    public static CategoryDto getCategoryDtoByRequestDto(Long id, CreateCategoryRequestDto requestDto) {
         CategoryDto category = new CategoryDto();
         category.setId(id);
         category.setName(requestDto.getName());
         category.setDescription(requestDto.getDescription());
         return category;
     }
-
-    public String getAdminToken() {
-        return jwtUtil.generateToken("admin@admin.com");
-    }
-
-    public String getUserToken() {
-        return jwtUtil.generateToken("user1@email.com");
-    }
-
 }

@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +22,7 @@ import dev.vasyl.proj.repository.BookRepository;
 import dev.vasyl.proj.service.impl.BookServiceImpl;
 import java.util.Collections;
 import java.util.Optional;
+
 import dev.vasyl.proj.util.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,8 +37,6 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTests {
-    private final TestUtil testUtil = new TestUtil();
-
     @Mock
     private BookRepository bookRepository;
 
@@ -52,14 +50,14 @@ public class BookServiceTests {
     @DisplayName("Verify that correct book is saved successfully")
     void save_shouldReturnBook_whenBookSavedSuccessfully() {
         when(bookRepository.existsByIsbn(anyString())).thenReturn(false);
-        when(bookMapper.toModel(any(CreateBookRequestDto.class))).thenReturn(testUtil.getOneBook());
-        when(bookRepository.save(any(Book.class))).thenReturn(testUtil.getOneBook());
-        when(bookMapper.toDto(any(Book.class))).thenReturn(testUtil.getOneBookDto());
+        when(bookMapper.toModel(any(CreateBookRequestDto.class))).thenReturn(TestUtil.getOneBook());
+        when(bookRepository.save(any(Book.class))).thenReturn(TestUtil.getOneBook());
+        when(bookMapper.toDto(any(Book.class))).thenReturn(TestUtil.getOneBookDto());
 
-        BookDto result = bookService.save(testUtil.getOneCreateBookRequestDto());
+        BookDto result = bookService.save(TestUtil.getOneCreateBookRequestDto());
 
         assertNotNull(result);
-        assertEquals(testUtil.getOneBookDto().getId(), result.getId());
+        assertEquals(TestUtil.getOneBookDto().getId(), result.getId());
         verify(bookRepository).save(any(Book.class));
         verify(bookRepository).existsByIsbn(anyString());
         verify(bookMapper).toModel(any(CreateBookRequestDto.class));
@@ -73,10 +71,10 @@ public class BookServiceTests {
 
         EntityAlreadyExistsException exception = assertThrows(
                 EntityAlreadyExistsException.class,
-                () -> bookService.save(testUtil.getOneCreateBookRequestDto())
+                () -> bookService.save(TestUtil.getOneCreateBookRequestDto())
         );
 
-        assertEquals("book with isbn [" + testUtil.getOneCreateBookRequestDto().getIsbn()
+        assertEquals("book with isbn [" + TestUtil.getOneCreateBookRequestDto().getIsbn()
                 + "] already exist", exception.getMessage());
         verify(bookRepository, never()).save(any(Book.class));
     }
@@ -85,7 +83,7 @@ public class BookServiceTests {
     @DisplayName("Verify that list of books returned successfully")
     void findAll_shouldReturnListOfBooks_whenBooksExist() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(testUtil.getOneBook()));
+        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(TestUtil.getOneBook()));
         Page<BookDtoWithoutCategoryIds> bookDtoPage =
                 new PageImpl<>(Collections.singletonList(new BookDtoWithoutCategoryIds()));
 
@@ -119,13 +117,13 @@ public class BookServiceTests {
     @Test
     @DisplayName("Verify that book is returned successfully when exist")
     void findById_shouldReturnBook_whenBookExists() {
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(testUtil.getOneBook()));
-        when(bookMapper.toDto(any(Book.class))).thenReturn(testUtil.getOneBookDto());
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(TestUtil.getOneBook()));
+        when(bookMapper.toDto(any(Book.class))).thenReturn(TestUtil.getOneBookDto());
 
         BookDto result = bookService.findById(1L);
 
         assertNotNull(result);
-        assertEquals(testUtil.getOneBookDto().getId(), result.getId());
+        assertEquals(TestUtil.getOneBookDto().getId(), result.getId());
         verify(bookRepository).findById(1L);
     }
 

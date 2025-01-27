@@ -28,8 +28,6 @@ public class BookRepositoryTests {
     private static final String DB_PATH_ADD_BOOKS_WITH_CATEGORIES = "database/book/add-books.sql";
     private static final String CLEAR_BOOKS_AND_CATEGORIES = "database/book/clear-books-and-categories.sql";
 
-    private final TestUtil testUtil = new TestUtil();
-
     @Autowired
     private BookRepository bookRepository;
 
@@ -58,7 +56,7 @@ public class BookRepositoryTests {
     @Test
     @DisplayName("Verify that a book exists for the specified ISBN")
     public void existsByIsbn_shouldReturnTrue_whenBookExist() {
-        assertTrue(bookRepository.existsByIsbn(testUtil.getListOfBooks().get(0).getIsbn()));
+        assertTrue(bookRepository.existsByIsbn(TestUtil.getListOfBooks().get(0).getIsbn()));
     }
 
     @Test
@@ -72,7 +70,7 @@ public class BookRepositoryTests {
     @Test
     @DisplayName("Verify that a book page has content when a book exists in the given category")
     public void findByCategoriesId_shouldReturnTrue_whenBookExists() {
-        Page<Book> bookPage = bookRepository.findByCategoriesId(testUtil.getCategory().getId(),
+        Page<Book> bookPage = bookRepository.findByCategoriesId(TestUtil.getCategory().getId(),
                 of(0, 1));
 
         assertTrue(bookPage.hasContent());
@@ -83,7 +81,7 @@ public class BookRepositoryTests {
     @Sql(scripts = "classpath:database/book/clear-books-and-categories.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void findByCategoriesId_shouldReturnFalse_whenBookNotExists() {
-        Page<Book> bookPage = bookRepository.findByCategoriesId(testUtil.getUnusedCategory().getId(),
+        Page<Book> bookPage = bookRepository.findByCategoriesId(TestUtil.getUnusedCategory().getId(),
                 of(0, 1));
 
         assertFalse(bookPage.hasContent());
