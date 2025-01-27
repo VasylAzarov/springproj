@@ -113,9 +113,9 @@ public class CategoryServiceTests {
         CategoryDto result = categoryService.save(requestDto);
 
         assertNotNull(result);
-        verify(categoryMapper, times(1)).toModel(requestDto);
-        verify(categoryMapper, times(1)).toDto(category);
-        verify(categoryRepository, times(1)).save(category);
+        verify(categoryMapper).toModel(requestDto);
+        verify(categoryMapper).toDto(category);
+        verify(categoryRepository).save(category);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CategoryServiceTests {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(bookRepository, times(1)).findByCategoriesId(id, pageable);
-        verify(bookMapper, times(1)).toBookDtoPage(bookPage);
+        verify(bookRepository).findByCategoriesId(id, pageable);
+        verify(bookMapper).toBookDtoPage(bookPage);
     }
 }

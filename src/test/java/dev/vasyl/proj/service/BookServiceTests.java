@@ -60,10 +60,10 @@ public class BookServiceTests {
 
         assertNotNull(result);
         assertEquals(testUtil.getOneBookDto().getId(), result.getId());
-        verify(bookRepository, times(1)).save(any(Book.class));
-        verify(bookRepository, times(1)).existsByIsbn(anyString());
-        verify(bookMapper, times(1)).toModel(any(CreateBookRequestDto.class));
-        verify(bookMapper, times(1)).toDto(any(Book.class));
+        verify(bookRepository).save(any(Book.class));
+        verify(bookRepository).existsByIsbn(anyString());
+        verify(bookMapper).toModel(any(CreateBookRequestDto.class));
+        verify(bookMapper).toDto(any(Book.class));
     }
 
     @Test
@@ -96,8 +96,8 @@ public class BookServiceTests {
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
-        verify(bookRepository, times(1)).findAll(pageable);
-        verify(bookMapper, times(1)).toBookDtoWithoutCategoryId(bookPage);
+        verify(bookRepository).findAll(pageable);
+        verify(bookMapper).toBookDtoWithoutCategoryId(bookPage);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class BookServiceTests {
 
         assertNotNull(result);
         assertTrue(result.getContent().isEmpty());
-        verify(bookRepository, times(1)).findAll(pageable);
+        verify(bookRepository).findAll(pageable);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class BookServiceTests {
 
         assertNotNull(result);
         assertEquals(testUtil.getOneBookDto().getId(), result.getId());
-        verify(bookRepository, times(1)).findById(1L);
+        verify(bookRepository).findById(1L);
     }
 
     @Test
@@ -140,6 +140,6 @@ public class BookServiceTests {
         );
 
         assertEquals("Can`t find Book entity by id: " + 1L, exception.getMessage());
-        verify(bookRepository, times(1)).findById(1L);
+        verify(bookRepository).findById(1L);
     }
 }
