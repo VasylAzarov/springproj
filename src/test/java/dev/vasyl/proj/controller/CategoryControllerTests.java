@@ -13,14 +13,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.vasyl.proj.dto.category.CategoryDto;
 import dev.vasyl.proj.dto.category.CreateCategoryRequestDto;
-import dev.vasyl.proj.security.JwtUtil;
+import dev.vasyl.proj.util.TestUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,7 +34,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,14 +44,13 @@ public class CategoryControllerTests {
     private static final String CONTROLLER_ENDPOINT = "/categories";
     private static final String DB_PATH_ADD_CATEGORIES = "database/category/add-categories.sql";
     private static final String CLEAR_CATEGORIES = "database/category/clear-categories.sql";
-    private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TestUtil testUtil;
 
     @AfterAll
     static void afterAll(@Autowired DataSource dataSource) {
@@ -81,10 +84,10 @@ public class CategoryControllerTests {
     @Test
     @DisplayName("Verify that all categories is returned successfully")
     void getAll_twoCategoriesInDb_returnsAllCategoriesDto() throws Exception {
-        List<CategoryDto> categoriesDto = getCategoriesDto();
+        List<CategoryDto> categoriesDto = testUtil.getCategoriesDto();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -102,10 +105,10 @@ public class CategoryControllerTests {
     @DisplayName("Verify that category is returned successfully when id correct")
     void getCategoryById_correctId_returnsCategoryDto() throws Exception {
         long bookId = 1L;
-        CategoryDto expectedCategory = getCategoryDto();
+        CategoryDto expectedCategory = testUtil.getCategoryDto();
 
         MvcResult result = mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + bookId)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -120,12 +123,12 @@ public class CategoryControllerTests {
     @Test
     @DisplayName("Verify that category is created successfully when requestDto correct")
     void createCategory_correctRequestDto_returnsCreatedCategory() throws Exception {
-        CreateCategoryRequestDto requestDto = getNewCreateCategoryRequestDto();
-        CategoryDto expectedCategory = getCategoryDtoByRequestDto(3L, requestDto);
+        CreateCategoryRequestDto requestDto = testUtil.getNewCreateCategoryRequestDto();
+        CategoryDto expectedCategory = testUtil.getCategoryDtoByRequestDto(3L, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(post(CONTROLLER_ENDPOINT)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -142,12 +145,12 @@ public class CategoryControllerTests {
     @DisplayName("Verify that category is updated successfully when requestDto correct")
     void updateCategoryById_correctRequestDto_returnsUpdatedCategory() throws Exception {
         Long categoryId = 2L;
-        CreateCategoryRequestDto requestDto = getNewCreateCategoryRequestDto();
-        CategoryDto expectedCategory = getCategoryDtoByRequestDto(categoryId, requestDto);
+        CreateCategoryRequestDto requestDto = testUtil.getNewCreateCategoryRequestDto();
+        CategoryDto expectedCategory = testUtil.getCategoryDtoByRequestDto(categoryId, requestDto);
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         MvcResult result = mockMvc.perform(put(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -166,62 +169,14 @@ public class CategoryControllerTests {
         long categoryId = 2L;
 
         mockMvc.perform(delete(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getAdminToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getAdminToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
         mockMvc.perform(get(CONTROLLER_ENDPOINT + "/" + categoryId)
-                        .header(AUTH_HEADER, BEARER_PREFIX + getUserToken())
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + testUtil.getUserToken())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
     }
-
-    private List<CategoryDto> getCategoriesDto() {
-        CategoryDto category1 = new CategoryDto();
-        category1.setId(1L);
-        category1.setName("Category 1");
-        category1.setDescription("Category 1");
-        CategoryDto category2 = new CategoryDto();
-        category2.setId(2L);
-        category2.setName("Category 2");
-        category2.setDescription("Category 2");
-
-        List<CategoryDto> expected = new ArrayList<>();
-        expected.add(category1);
-        expected.add(category2);
-        return expected;
-    }
-
-    private CreateCategoryRequestDto getNewCreateCategoryRequestDto() {
-        CreateCategoryRequestDto category = new CreateCategoryRequestDto();
-        category.setName("Category 3");
-        category.setDescription("Category 3");
-        return category;
-    }
-
-    private CategoryDto getCategoryDto() {
-        CategoryDto category = new CategoryDto();
-        category.setId(1L);
-        category.setName("Category 1");
-        category.setDescription("Category 1");
-        return category;
-    }
-
-    private CategoryDto getCategoryDtoByRequestDto(Long id, CreateCategoryRequestDto requestDto) {
-        CategoryDto category = new CategoryDto();
-        category.setId(id);
-        category.setName(requestDto.getName());
-        category.setDescription(requestDto.getDescription());
-        return category;
-    }
-
-    private String getAdminToken() {
-        return jwtUtil.generateToken("admin@admin.com");
-    }
-
-    private String getUserToken() {
-        return jwtUtil.generateToken("user1@email.com");
-    }
-
 }

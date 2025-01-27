@@ -21,10 +21,9 @@ import dev.vasyl.proj.mapper.BookMapper;
 import dev.vasyl.proj.model.Book;
 import dev.vasyl.proj.repository.BookRepository;
 import dev.vasyl.proj.service.impl.BookServiceImpl;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+import dev.vasyl.proj.util.TestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +37,8 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTests {
+    private final TestUtil testUtil = new TestUtil();
+
     @Mock
     private BookRepository bookRepository;
 
@@ -47,46 +48,18 @@ public class BookServiceTests {
     @InjectMocks
     private BookServiceImpl bookService;
 
-    private CreateBookRequestDto createBookRequestDto;
-    private Book book;
-    private BookDto bookDto;
-
-    @BeforeEach
-    void setup() {
-        createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setTitle("Test Title");
-        createBookRequestDto.setAuthor("Test Author");
-        createBookRequestDto.setIsbn("123-456-789");
-        createBookRequestDto.setPrice(BigDecimal.valueOf(19.99));
-        createBookRequestDto.setCategoryIds(Collections.singletonList(1L));
-
-        book = new Book();
-        book.setId(1L);
-        book.setTitle("Test Title");
-        book.setAuthor("Test Author");
-        book.setIsbn("123-456-789");
-        book.setPrice(BigDecimal.valueOf(19.99));
-
-        bookDto = new BookDto();
-        bookDto.setId(1L);
-        bookDto.setTitle("Test Title");
-        bookDto.setAuthor("Test Author");
-        bookDto.setIsbn("123-456-789");
-        bookDto.setPrice(BigDecimal.valueOf(19.99));
-    }
-
     @Test
     @DisplayName("Verify that correct book is saved successfully")
     void save_shouldReturnBook_whenBookSavedSuccessfully() {
         when(bookRepository.existsByIsbn(anyString())).thenReturn(false);
-        when(bookMapper.toModel(any(CreateBookRequestDto.class))).thenReturn(book);
-        when(bookRepository.save(any(Book.class))).thenReturn(book);
-        when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
+        when(bookMapper.toModel(any(CreateBookRequestDto.class))).thenReturn(testUtil.getOneBook());
+        when(bookRepository.save(any(Book.class))).thenReturn(testUtil.getOneBook());
+        when(bookMapper.toDto(any(Book.class))).thenReturn(testUtil.getOneBookDto());
 
-        BookDto result = bookService.save(createBookRequestDto);
+        BookDto result = bookService.save(testUtil.getOneCreateBookRequestDto());
 
         assertNotNull(result);
-        assertEquals(bookDto.getId(), result.getId());
+        assertEquals(testUtil.getOneBookDto().getId(), result.getId());
         verify(bookRepository, times(1)).save(any(Book.class));
         verify(bookRepository, times(1)).existsByIsbn(anyString());
         verify(bookMapper, times(1)).toModel(any(CreateBookRequestDto.class));
@@ -100,20 +73,19 @@ public class BookServiceTests {
 
         EntityAlreadyExistsException exception = assertThrows(
                 EntityAlreadyExistsException.class,
-                () -> bookService.save(createBookRequestDto)
+                () -> bookService.save(testUtil.getOneCreateBookRequestDto())
         );
 
-        assertEquals("book with isbn [" + createBookRequestDto.getIsbn()
+        assertEquals("book with isbn [" + testUtil.getOneCreateBookRequestDto().getIsbn()
                 + "] already exist", exception.getMessage());
         verify(bookRepository, never()).save(any(Book.class));
     }
-
 
     @Test
     @DisplayName("Verify that list of books returned successfully")
     void findAll_shouldReturnListOfBooks_whenBooksExist() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(book));
+        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(testUtil.getOneBook()));
         Page<BookDtoWithoutCategoryIds> bookDtoPage =
                 new PageImpl<>(Collections.singletonList(new BookDtoWithoutCategoryIds()));
 
@@ -147,13 +119,13 @@ public class BookServiceTests {
     @Test
     @DisplayName("Verify that book is returned successfully when exist")
     void findById_shouldReturnBook_whenBookExists() {
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-        when(bookMapper.toDto(any(Book.class))).thenReturn(bookDto);
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(testUtil.getOneBook()));
+        when(bookMapper.toDto(any(Book.class))).thenReturn(testUtil.getOneBookDto());
 
         BookDto result = bookService.findById(1L);
 
         assertNotNull(result);
-        assertEquals(bookDto.getId(), result.getId());
+        assertEquals(testUtil.getOneBookDto().getId(), result.getId());
         verify(bookRepository, times(1)).findById(1L);
     }
 
