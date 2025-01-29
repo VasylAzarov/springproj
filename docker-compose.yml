@@ -20,7 +20,7 @@ services:
     depends_on:
       - mysqldb
     restart: on-failure
-    image: springproj
+    image: springproject
     build: .
     env_file: ./.env
     ports:
