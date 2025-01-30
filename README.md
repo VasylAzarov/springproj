@@ -145,7 +145,7 @@ the need for a scalable and secure backend that adheres to best practices in sof
     - **_DELETE_** `/api/cart/items/{cartItemId}` : Delete item from user cart.
 
 ## Postman collection
-[lint to postman collection](https://springproject.postman.co/workspace/SpringProject-Workspace~8c470f00-7663-4779-8f0c-fecb50086022/collection/17862326-ab3be485-333b-4492-8eec-7b58461bcc1d?action=share&creator=17862326)
+[link to postman collection](https://springproject.postman.co/workspace/SpringProject-Workspace~8c470f00-7663-4779-8f0c-fecb50086022/collection/17862326-ab3be485-333b-4492-8eec-7b58461bcc1d?action=share&creator=17862326)
 
 ## API Documentation
 
